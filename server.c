@@ -11,6 +11,28 @@
 #define PORT 8080
 #define SA struct sockaddr
 
+
+//function to delete file
+void rmv(int sockfd)
+{
+	int connfd;
+	int n;
+	char buff[MAX];
+	char t[50];
+
+	printf("remove: ");
+	scanf("%s", &t);
+	if (remove( &t ) == 0){
+      		printf("Deleted successfully\n");
+		send(connfd, "deleted", 7, 0);
+	}
+   	else{
+      		printf("Unable to delete the file\n");
+		send(sockfd, "not deleted", 11, 0);
+	} 
+   
+}
+
 //function to list all the files on the server
 void list(int sockfd)
 {
@@ -94,7 +116,14 @@ void func(int sockfd)
 			break;
 		}
 		
+		//for listinf of files
 		if (strncmp("list", buff, 4) == 0){
+			break;
+		}
+
+		//to delete file
+		if (strncmp("del", buff, 3) == 0){
+			rmv(sockfd);
 			break;
 		}
 	}
