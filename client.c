@@ -6,10 +6,10 @@
 #include <sys/socket.h> 
 #include<unistd.h>
 #include <dirent.h>
+#include <arpa/inet.h>
 #define MAX 80 
 #define PORT 8080 
 #define SA struct sockaddr 
-
 
 ///function to list all the files on the server
 void list(int sockfd)
@@ -18,7 +18,7 @@ void list(int sockfd)
 
 	struct dirent *dir;
 
-	d = opendir("/home/ubuntu/td");
+	d = opendir("/home/ubuntu/improved server 1.0/td");
 
 	if (d)
 	{
@@ -54,6 +54,8 @@ void recvFile(int sockfd)
 	printf("File received successfully !! \n");
 	printf("New File created is %s !! \n", &y);
 }
+
+//function to chat
 void func(int sockfd) 
 { 
 	char buff[MAX]; 
@@ -61,7 +63,7 @@ void func(int sockfd)
 	for (;;) 
 	{ 
 		bzero(buff, sizeof(buff)); 
-		printf("Enter the string : "); 
+		printf("Enter command: "); 
 		n = 0; 
 		while ((buff[n++] = getchar()) != '\n'); 
 		write(sockfd, buff, sizeof(buff)); 
@@ -84,6 +86,12 @@ void func(int sockfd)
 		if (strncmp("list", buff,4) == 0){
 			printf("receiving list...\n");
 			list(sockfd);
+			break;
+		}
+
+		//delete
+		if (strncmp("del", buff,3) == 0){
+			recv(sockfd, buff, sizeof(buff), 0);
 			break;
 		}
 
