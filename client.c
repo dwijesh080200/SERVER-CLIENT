@@ -4,9 +4,58 @@
 #include <stdlib.h> 
 #include <string.h> 
 #include <sys/socket.h> 
+#include<unistd.h>
+#include <dirent.h>
+#include <arpa/inet.h>
 #define MAX 80 
 #define PORT 8080 
 #define SA struct sockaddr 
+
+///function to list all the files on the server
+void list(int sockfd)
+{
+	DIR *d;
+
+	struct dirent *dir;
+
+	d = opendir("/home/ubuntu/improved server 1.0/td");
+
+	if (d)
+	{
+		while ((dir = readdir(d)) != NULL)
+		{
+			printf("%s\n", dir->d_name);
+		}
+
+		closedir(d);
+
+	}
+}
+
+//function to receive file
+void recvFile(int sockfd) 
+{ 
+	char buff[MAX];  // to store message from client
+	char y[50];
+ 
+	FILE *fp;
+	printf("name your received file: ");
+	scanf("%s",&y);
+	fp=fopen(&y,"w"); // stores the file content in recieved.txt in the program directory
+ 
+	if( fp == NULL ){
+	printf("Error IN Opening File ");
+	return ;
+	}
+ 
+	while( read(sockfd,buff,MAX) > 0 )
+	fprintf(fp,"%s",buff);
+ 
+	printf("File received successfully !! \n");
+	printf("New File created is %s !! \n", &y);
+}
+
+//function to chat
 void func(int sockfd) 
 { 
 	char buff[MAX]; 
@@ -14,7 +63,7 @@ void func(int sockfd)
 	for (;;) 
 	{ 
 		bzero(buff, sizeof(buff)); 
-		printf("Enter the string : "); 
+		printf("Enter command: "); 
 		n = 0; 
 		while ((buff[n++] = getchar()) != '\n'); 
 		write(sockfd, buff, sizeof(buff)); 
@@ -26,13 +75,35 @@ void func(int sockfd)
 			printf("Client Exit...\n"); 
 			break; 
 		} 
+		//for file transfer purposes
+		if (strncmp("send", buff,4) == 0){
+			printf("receiving file...\n");
+			recvFile(sockfd);
+			break;
+		}
+
+		//to receive list
+		if (strncmp("list", buff,4) == 0){
+			printf("receiving list...\n");
+			list(sockfd);
+			break;
+		}
+
+		//delete
+		if (strncmp("del", buff,3) == 0){
+			recv(sockfd, buff, sizeof(buff), 0);
+			break;
+		}
+
 	} 
 } 
+
   
 int main() 
 { 
 	int sockfd, connfd; 
 	struct sockaddr_in servaddr, cli; 
+	char buff[MAX];
 	
 	// socket create and varification 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0); 
