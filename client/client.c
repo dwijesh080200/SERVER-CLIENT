@@ -18,7 +18,7 @@ void list(int sockfd)
 
 	struct dirent *dir;
 
-	d = opendir("/home/ubuntu/improved server 1.0/td");
+	d = opendir("~/SERVER-CLIENT/server");
 
 	if (d)
 	{
