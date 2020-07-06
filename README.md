@@ -9,11 +9,16 @@
   ```
   - $cd server
   ```
+- Etant dans le dossier server, sur votre terminal, faites un pwd
+  ```
+  - $pwd
+  ```
+- le path que vous avez, copier coller le dans le fichier client.c, où on a ecrit:~/SERVER-CLIENT/server
+  
 - Pour le client, diriger vous vers le dossier client
   ```
   - $cd client
   ```
-  
 - Pour compiler le server.c et executer
   ```
   - $gcc server.c -o server
